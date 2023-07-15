@@ -27,3 +27,15 @@ variable "default_key_bits" {
   description = "Default key bits"
   default     = 256
 }
+
+variable "int_default_issuer" {
+  type        = string
+  description = "Default issuer for intermediate CA"
+  default     = null
+}
+
+variable "iss_default_issuer" {
+  type        = string
+  description = "Default issuer for issuing CA"
+  default     = null
+}

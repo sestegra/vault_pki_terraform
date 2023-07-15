@@ -6,6 +6,7 @@ resource "vault_mount" "pki_int" {
 }
 
 resource "vault_pki_secret_backend_config_issuers" "int" {
+  count   = var.int_default_issuer != null ? 1 : 0
   backend = vault_mount.pki_int.path
-  default = module.issuer_v1_1.issuer_id
+  default = var.iss_default_issuer
 }

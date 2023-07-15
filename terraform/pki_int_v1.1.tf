@@ -23,3 +23,8 @@ output "certificate_v1_1" {
   value       = module.issuer_v1_1.certificate
   sensitive   = true
 }
+
+output "issuer_v1_1" {
+  description = "v1.1 issuer ID"
+  value       = module.issuer_v1_1.issuer_id
+}

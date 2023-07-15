@@ -1,3 +1,5 @@
 root/
-*.csr
 *.crt
+*.csr
+*.issuer
+*.json
