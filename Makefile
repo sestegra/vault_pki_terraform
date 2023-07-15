@@ -36,6 +36,11 @@ issue_iss:
 # v1.1
 .PHONY: issuer_int_v1.1
 issuer_int_v1.1: pki_int_v1.1.crt
+	echo 'int_default_issuer="$(shell cat pki_int_v1.1.issuer)"' > terraform/pki_int.auto.tfvars
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target vault_pki_secret_backend_config_issuers.int
 
 pki_int_v1.1.csr:
 	cd terraform \
@@ -60,11 +65,18 @@ pki_int_v1.1.crt: pki_int_v1.1.csr
 		&& \
 		terraform apply -auto-approve \
 			-target module.issuer_v1_1 \
-			-target vault_pki_secret_backend_config_issuers.int
+		&& \
+		terraform output -json > ../pki_int_v1.1.json
+	jq -r .issuer_v1_1.value pki_int_v1.1.json > pki_int_v1.1.issuer
 
 # v1.2
 .PHONY: issuer_int_v1.2
 issuer_int_v1.2: pki_int_v1.2.crt
+	echo 'int_default_issuer="$(shell cat pki_int_v1.2.issuer)"' > terraform/pki_int.auto.tfvars
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target vault_pki_secret_backend_config_issuers.int
 
 pki_int_v1.2.csr:
 	cd terraform \
@@ -72,7 +84,7 @@ pki_int_v1.2.csr:
 		terraform apply -auto-approve -target module.issuer_v1_2 \
 		&& \
 		terraform output -json > ../pki_int_v1.2.json
-	jq -r .csr_v1_1.value pki_int_v1.2.json > pki_int_v1.2.csr
+	jq -r .csr_v1_2.value pki_int_v1.2.json > pki_int_v1.2.csr
 
 pki_int_v1.2.crt: pki_int_v1.2.csr
 	certstrap --depot-path root sign \
@@ -89,7 +101,8 @@ pki_int_v1.2.crt: pki_int_v1.2.csr
 		&& \
 		terraform apply -auto-approve \
 			-target module.issuer_v1_2 \
-			-target vault_pki_secret_backend_config_issuers.int
+		terraform output -json > ../pki_int_v1.2.json
+	jq -r .issuer_v1_2.value pki_int_v1.2.json > pki_int_v1.2.issuer
 
 # v1.1.1
 .PHONY: pki_iss_v1.1.1 issuer_iss_v1.1.1
