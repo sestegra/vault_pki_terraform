@@ -33,3 +33,12 @@ make issuer_int_v1.2.1
 make issue_iss
 
 ```
+
+## Test the whole
+
+```
+make clean all && make issue_iss > example_v1.1.1.crt && \
+make issuer_iss_v1.1.2 && make issue_iss > example_v1.1.2.crt && \
+make issuer_int_v1.2 && make issuer_iss_v1.2.1 && make issue_iss > example_v1.2.1.crt && \
+echo "Done"
+```

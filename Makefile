@@ -33,6 +33,32 @@ issue_iss:
 			| jq -r .data.certificate \
     	| openssl x509 -text -noout
 
+# v1
+.PHONY: issuer_root_v1
+root/Example_Labs_Root_CA_v1.crt:
+	certstrap --depot-path root init \
+		--organization "Example" \
+		--common-name "Example Labs Root CA v1" \
+		--expires "10 years" \
+		--curve P-256 \
+		--path-length 2 \
+		--passphrase "secret"
+
+issuer_root_v1: root/Example_Labs_Root_CA_v1.crt
+
+# v2
+.PHONY: issuer_root_v2
+root/Example_Labs_Root_CA_v2.crt:
+	certstrap --depot-path root init \
+		--organization "Example" \
+		--common-name "Example Labs Root CA v2" \
+		--expires "10 years" \
+		--curve P-256 \
+		--path-length 2 \
+		--passphrase "secret"
+
+issuer_root_v2: root/Example_Labs_Root_CA_v2.crt
+
 # v1.1
 .PHONY: issuer_int_v1.1
 issuer_int_v1.1: pki_int_v1.1.crt
@@ -53,14 +79,14 @@ pki_int_v1.1.csr:
 
 pki_int_v1.1.crt: pki_int_v1.1.csr
 	certstrap --depot-path root sign \
-    --CA "Example Labs Root CA v1" \
-    --passphrase "secret" \
-    --intermediate \
-    --csr pki_int_v1.1.csr \
-    --expires "5 years" \
-    --path-length 1 \
-    --cert pki_int_v1.1.crt \
-    "Example Labs Intermediate CA v1.1"
+		--CA "Example Labs Root CA v1" \
+		--passphrase "secret" \
+		--intermediate \
+		--csr pki_int_v1.1.csr \
+		--expires "5 years" \
+		--path-length 1 \
+		--cert pki_int_v1.1.crt \
+		"Example Labs Intermediate CA v1.1"
 	openssl x509 -in pki_int_v1.1.crt -text -noout
 	cd terraform \
 		&& \
@@ -89,14 +115,14 @@ pki_int_v1.2.csr:
 
 pki_int_v1.2.crt: pki_int_v1.2.csr
 	certstrap --depot-path root sign \
-    --CA "Example Labs Root CA v1" \
-    --passphrase "secret" \
-    --intermediate \
-    --csr pki_int_v1.2.csr \
-    --expires "5 years" \
-    --path-length 1 \
-    --cert pki_int_v1.2.crt \
-    "Example Labs Intermediate CA v1.2"
+		--CA "Example Labs Root CA v1" \
+		--passphrase "secret" \
+		--intermediate \
+		--csr pki_int_v1.2.csr \
+		--expires "5 years" \
+		--path-length 1 \
+		--cert pki_int_v1.2.crt \
+		"Example Labs Intermediate CA v1.2"
 	openssl x509 -in pki_int_v1.2.crt -text -noout
 	cd terraform \
 		&& \
