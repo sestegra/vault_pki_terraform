@@ -2,6 +2,7 @@ SHELL := /usr/bin/env bash
 
 .PHONY: all rotate
 all: \
+	issuer_root_v1 \
 	init \
 	issuer_int_v1.1 \
 	issuer_iss_v1.1.1 \
@@ -132,6 +133,42 @@ pki_int_v1.2.crt: pki_int_v1.2.csr
 		terraform output -json > ../pki_int_v1.2.json
 	jq -r .issuer_v1_2.value pki_int_v1.2.json > pki_int_v1.2.issuer
 
+# v2.1
+.PHONY: issuer_int_v2.1
+issuer_int_v2.1: pki_int_v2.1.crt
+	echo 'int_default_issuer="$(shell cat pki_int_v2.1.issuer)"' > terraform/pki_int.auto.tfvars
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target vault_pki_secret_backend_config_issuers.int
+
+pki_int_v2.1.csr:
+	cd terraform \
+		&& \
+		terraform apply -auto-approve -target module.issuer_v2_1 \
+		&& \
+		terraform output -json > ../pki_int_v2.1.json
+	jq -r .csr_v2_1.value pki_int_v2.1.json > pki_int_v2.1.csr
+
+pki_int_v2.1.crt: pki_int_v2.1.csr
+	certstrap --depot-path root sign \
+		--CA "Example Labs Root CA v2" \
+		--passphrase "secret" \
+		--intermediate \
+		--csr pki_int_v2.1.csr \
+		--expires "5 years" \
+		--path-length 1 \
+		--cert pki_int_v2.1.crt \
+		"Example Labs Intermediate CA v2.1"
+	openssl x509 -in pki_int_v2.1.crt -text -noout
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target module.issuer_v2_1 \
+		&& \
+		terraform output -json > ../pki_int_v2.1.json
+	jq -r .issuer_v2_1.value pki_int_v2.1.json > pki_int_v2.1.issuer
+
 # v1.1.1
 .PHONY: pki_iss_v1.1.1 issuer_iss_v1.1.1
 pki_iss_v1.1.1:
@@ -192,10 +229,32 @@ issuer_iss_v1.2.1: pki_iss_v1.2.1
 		terraform apply -auto-approve \
 			-target vault_pki_secret_backend_config_issuers.iss
 
+# v2.1.1
+.PHONY: pki_iss_v2.1.1 issuer_iss_v2.1.1
+pki_iss_v2.1.1:
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target module.issuer_v2_1_1 \
+		&& \
+		terraform output -json > ../pki_iss_v2.1.1.json
+	jq -r .certificate_v2_1_1.value pki_iss_v2.1.1.json > pki_iss_v2.1.1.crt
+	jq -r .issuer_v2_1_1.value pki_iss_v2.1.1.json > pki_iss_v2.1.1.issuer
+	openssl x509 -in pki_iss_v2.1.1.crt -text -noout
 
-.PHONY: clean
+issuer_iss_v2.1.1: pki_iss_v2.1.1
+	echo 'iss_default_issuer="$(shell cat pki_iss_v2.1.1.issuer)"' > terraform/pki_iss.auto.tfvars
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target vault_pki_secret_backend_config_issuers.iss
+
+.PHONY: clean clean_root
 clean:
 	killall -9 vault || true
 	rm -f *.crt *.csr *.json
 	rm -rf terraform/.terraform.lock.hcl terraform/.terraform
 	rm -rf terraform/terraform.tfstate terraform/terraform.tfstate.backup
+
+clean_root:
+	rm -rf root

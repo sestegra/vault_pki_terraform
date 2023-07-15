@@ -37,8 +37,13 @@ make issue_iss
 ## Test the whole
 
 ```
-make clean all && make issue_iss > example_v1.1.1.crt && \
+make clean && \
+make init && \
+make issuer_root_v1 && \
+make issuer_int_v1.1 issuer_iss_v1.1.1 roles && make issue_iss > example_v1.1.1.crt && \
 make issuer_iss_v1.1.2 && make issue_iss > example_v1.1.2.crt && \
-make issuer_int_v1.2 && make issuer_iss_v1.2.1 && make issue_iss > example_v1.2.1.crt && \
+make issuer_int_v1.2 issuer_iss_v1.2.1 && make issue_iss > example_v1.2.1.crt && \
+make issuer_root_v2 && \
+make issuer_int_v2.1 issuer_iss_v2.1.1 && make issue_iss > example_v2.1.1.crt && \
 echo "Done"
 ```
