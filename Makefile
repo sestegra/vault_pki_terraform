@@ -32,6 +32,15 @@ pki_int_v1.1.1.crt:
 		terraform output -json certificate_v1_1_1 | jq -r . > ../pki_int_v1.1.1.crt
 	openssl x509 -in pki_int_v1.1.1.crt -text -noout
 
+.PHONY: generate
+generate:
+	VAULT_ADDR=http://127.0.0.1:8200 VAULT_TOKEN=root vault write -format=json \
+    pki_iss/issue/example_com \
+    common_name="sample.example.com" \
+		ttl="5m" \
+			| jq -r .data.certificate \
+    	| openssl x509 -text -noout
+
 .PHONY: clean
 clean:
 	killall -9 vault || true

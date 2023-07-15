@@ -10,6 +10,12 @@ variable "pki_iss_mount_path" {
   default     = "pki_iss"
 }
 
+variable "organization" {
+  type        = string
+  description = "Organization name"
+  default     = "Example"
+}
+
 variable "default_key_type" {
   type        = string
   description = "Default key type"
