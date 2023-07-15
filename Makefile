@@ -45,7 +45,8 @@ issuer_int_v1.1: pki_int_v1.1.crt
 pki_int_v1.1.csr:
 	cd terraform \
 		&& \
-		terraform apply -auto-approve -target module.issuer_v1_1 \
+		terraform apply -auto-approve \
+			-target module.issuer_v1_1 \
 		&& \
 		terraform output -json > ../pki_int_v1.1.json
 	jq -r .csr_v1_1.value pki_int_v1.1.json > pki_int_v1.1.csr
@@ -101,6 +102,7 @@ pki_int_v1.2.crt: pki_int_v1.2.csr
 		&& \
 		terraform apply -auto-approve \
 			-target module.issuer_v1_2 \
+		&& \
 		terraform output -json > ../pki_int_v1.2.json
 	jq -r .issuer_v1_2.value pki_int_v1.2.json > pki_int_v1.2.issuer
 
