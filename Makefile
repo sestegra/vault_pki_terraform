@@ -11,7 +11,7 @@ init:
 
 pki_int_v1.1.csr:
 	cd terraform && \
-		terraform apply -auto-approve && \
+		terraform apply -auto-approve -target module.issuer_v1_1 && \
 		terraform output -json csr_v1_1 | jq -r . > ../pki_int_v1.1.csr
 
 pki_int_v1.1.crt: pki_int_v1.1.csr
@@ -28,7 +28,7 @@ pki_int_v1.1.crt: pki_int_v1.1.csr
 
 pki_int_v1.1.1.crt:
 	cd terraform && \
-		terraform apply -auto-approve && \
+		terraform apply -auto-approve -target module.issuer_v1_1_1 && \
 		terraform output -json certificate_v1_1_1 | jq -r . > ../pki_int_v1.1.1.crt
 	openssl x509 -in pki_int_v1.1.1.crt -text -noout
 

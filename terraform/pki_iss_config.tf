@@ -5,6 +5,11 @@ resource "vault_mount" "pki_iss" {
   max_lease_ttl_seconds = local.duration_1y_in_sec
 }
 
+resource "vault_pki_secret_backend_config_issuers" "iss" {
+  backend = vault_mount.pki_iss.path
+  default = module.issuer_v1_1_1.issuer_id
+}
+
 resource "vault_pki_secret_backend_role" "example_com" {
   backend                     = vault_mount.pki_iss.path
   name                        = "example_com"
