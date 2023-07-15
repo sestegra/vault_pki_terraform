@@ -2,16 +2,20 @@
 
 all: init \
 	pki_int_v1.1.crt \
-	pki_int_v1.1.1.crt
+	pki_iss_v1.1.1.crt \
+	roles
 
 .PHONY: init
 init:
-	cd terraform && \
+	cd terraform \
+		&& \
 		terraform init
 
 pki_int_v1.1.csr:
-	cd terraform && \
-		terraform apply -auto-approve -target module.issuer_v1_1 && \
+	cd terraform \
+		&& \
+		terraform apply -auto-approve -target module.issuer_v1_1 \
+		&& \
 		terraform output -json csr_v1_1 | jq -r . > ../pki_int_v1.1.csr
 
 pki_int_v1.1.crt: pki_int_v1.1.csr
@@ -25,12 +29,28 @@ pki_int_v1.1.crt: pki_int_v1.1.csr
     --cert pki_int_v1.1.crt \
     "Example Labs Intermediate CA v1.1"
 	openssl x509 -in pki_int_v1.1.crt -text -noout
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target module.issuer_v1_1 \
+			-target vault_pki_secret_backend_config_issuers.int
 
-pki_int_v1.1.1.crt:
-	cd terraform && \
-		terraform apply -auto-approve -target module.issuer_v1_1_1 && \
-		terraform output -json certificate_v1_1_1 | jq -r . > ../pki_int_v1.1.1.crt
-	openssl x509 -in pki_int_v1.1.1.crt -text -noout
+pki_iss_v1.1.1.crt:
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target module.issuer_v1_1_1 \
+			-target vault_pki_secret_backend_config_issuers.iss \
+		&& \
+		terraform output -json certificate_v1_1_1 | jq -r . > ../pki_iss_v1.1.1.crt
+	openssl x509 -in pki_iss_v1.1.1.crt -text -noout
+
+.PHONY: roles
+roles:
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target vault_pki_secret_backend_role.example_com
 
 .PHONY: generate
 generate:
