@@ -26,4 +26,10 @@ make issue_iss
 
 # Rotate the intermediate CA
 make issuer_int_v1.2
+
+# Rotate the issuing CA
+make issuer_int_v1.2.1
+# Issue a certificate from the issuer v1.2.1
+make issue_iss
+
 ```

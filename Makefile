@@ -146,6 +146,27 @@ issuer_iss_v1.1.2: pki_iss_v1.1.2
 		terraform apply -auto-approve \
 			-target vault_pki_secret_backend_config_issuers.iss
 
+# v1.2.1
+.PHONY: pki_iss_v1.2.1 issuer_iss_v1.2.1
+pki_iss_v1.2.1:
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target module.issuer_v1_2_1 \
+		&& \
+		terraform output -json > ../pki_iss_v1.2.1.json
+	jq -r .certificate_v1_2_1.value pki_iss_v1.2.1.json > pki_iss_v1.2.1.crt
+	jq -r .issuer_v1_2_1.value pki_iss_v1.2.1.json > pki_iss_v1.2.1.issuer
+	openssl x509 -in pki_iss_v1.2.1.crt -text -noout
+
+issuer_iss_v1.2.1: pki_iss_v1.2.1
+	echo 'iss_default_issuer="$(shell cat pki_iss_v1.2.1.issuer)"' > terraform/pki_iss.auto.tfvars
+	cd terraform \
+		&& \
+		terraform apply -auto-approve \
+			-target vault_pki_secret_backend_config_issuers.iss
+
+
 .PHONY: clean
 clean:
 	killall -9 vault || true

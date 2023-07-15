@@ -19,6 +19,6 @@ output "certificate_v1_1_2" {
 }
 
 output "issuer_v1_1_2" {
-  description = "v1_1_2 issuer ID"
+  description = "Issuer ID for v1.1.2"
   value       = module.issuer_v1_1_2.issuer_id
 }
