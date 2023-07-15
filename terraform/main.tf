@@ -32,6 +32,12 @@ output "csr_v1_1" {
   sensitive   = true
 }
 
+output "certificate_v1_1" {
+  description = "Certificate for v1.1"
+  value       = module.issuer_v1_1.certificate
+  sensitive   = true
+}
+
 module "issuer_v1_1_1" {
   source = "./modules/issuer"
   issuer = {
@@ -45,3 +51,23 @@ module "issuer_v1_1_1" {
   }
   depends_on = [vault_mount.pki_iss, module.issuer_v1_1]
 }
+
+output "certificate_v1_1_1" {
+  description = "Certificate for v1.1.1"
+  value       = module.issuer_v1_1_1.certificate
+  sensitive   = true
+}
+
+# module "issuer_v1_1_2" {
+#   source = "./modules/issuer"
+#   issuer = {
+#     name             = "v1.1.2"
+#     backend          = var.pki_iss_mount_path
+#     sign_backend     = module.issuer_v1_1.certificate != null ? var.pki_int_mount_path : null
+#     organization     = "Example"
+#     certificate_name = "Example Labs Issuing CA v1.1.2"
+#     key_type         = var.default_key_type
+#     key_bits         = var.default_key_bits
+#   }
+#   depends_on = [vault_mount.pki_iss, module.issuer_v1_1]
+# }

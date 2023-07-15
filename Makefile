@@ -1,16 +1,18 @@
 .PHONY: all
 
-all: terraform/.terraform.lock.hcl \
-	pki_int_v1.1.crt
+all: init \
+	pki_int_v1.1.crt \
+	pki_int_v1.1.1.crt
 
-terraform/.terraform.lock.hcl:
+.PHONY: init
+init:
 	cd terraform && \
 		terraform init
 
 pki_int_v1.1.csr:
 	cd terraform && \
 		terraform apply -auto-approve && \
-		terraform output -json csr_v1_1 | jq -r .csr > ../pki_int_v1.1.csr
+		terraform output -json csr_v1_1 | jq -r . > ../pki_int_v1.1.csr
 
 pki_int_v1.1.crt: pki_int_v1.1.csr
 	certstrap --depot-path root sign \
@@ -22,8 +24,13 @@ pki_int_v1.1.crt: pki_int_v1.1.csr
     --path-length 1 \
     --cert pki_int_v1.1.crt \
     "Example Labs Intermediate CA v1.1"
+	openssl x509 -in pki_int_v1.1.crt -text -noout
+
+pki_int_v1.1.1.crt:
 	cd terraform && \
-		terraform apply -auto-approve
+		terraform apply -auto-approve && \
+		terraform output -json certificate_v1_1_1 | jq -r . > ../pki_int_v1.1.1.crt
+	openssl x509 -in pki_int_v1.1.1.crt -text -noout
 
 .PHONY: clean
 clean:
