@@ -25,7 +25,6 @@ make roles
 
 # Issue a certificate from the issuer v1.1.1
 make issue_iss 
-
 # Rotate the issuing CA
 make issuer_iss_v1.1.2
 # Issue a certificate from the issuer v1.1.2
