@@ -30,7 +30,7 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "this" {
   certificate = vault_pki_secret_backend_root_sign_intermediate.this.certificate_bundle
 }
 
-# Name the certificate issuer
+# Name the issuer
 resource "vault_pki_secret_backend_issuer" "this" {
   backend     = var.issuer.backend
   issuer_ref  = vault_pki_secret_backend_intermediate_set_signed.this.imported_issuers[0]

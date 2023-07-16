@@ -23,7 +23,7 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "this" {
   certificate = var.issuer.certificate
 }
 
-# Name the certificate issuer
+# Name the issuer
 resource "vault_pki_secret_backend_issuer" "this" {
   count       = var.issuer.certificate != null ? 1 : 0
   backend     = var.issuer.backend
