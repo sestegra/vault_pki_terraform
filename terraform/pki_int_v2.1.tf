@@ -1,5 +1,5 @@
 module "issuer_v2_1" {
-  source = "./modules/issuer"
+  source = "./modules/issuer_external_ca"
   issuer = {
     name             = "v2.1"
     backend          = vault_mount.pki_int.path

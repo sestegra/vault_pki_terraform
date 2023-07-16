@@ -6,8 +6,7 @@ variable "issuer" {
     certificate_name = string
     key_type         = string
     key_bits         = number
-    certificate      = optional(string) # For external CA
-    sign_backend     = optional(string) # For Vault CA
+    certificate      = string
   })
   description = "Issuer configuration"
 }
