@@ -7,7 +7,7 @@ module "issuer_v1_1" {
     certificate_name = "Example Labs Intermediate CA v1.1"
     key_type         = var.default_key_type
     key_bits         = var.default_key_bits
-    certificate      = fileexists("${path.root}/../pki_int_v1.1.crt") ? file("../pki_int_v1.1.crt") : null
+    certificate      = fileexists("${path.root}/../pki_int_v1.1.crt") ? file("${path.root}/../pki_int_v1.1.crt") : null
   }
   depends_on = [vault_mount.pki_int]
 }
